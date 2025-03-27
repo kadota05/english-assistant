@@ -46,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.10",
     "cross-env": "^7.0.3"
   }
 }
