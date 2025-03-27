@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fetchChatResponse } from '../services/deepSeekService';
-import { Popover } from 'bootstrap';
+import { fetchChatResponse } from '../services/aiService';
+import { usePopover } from '../hooks/usePopover';
 
 const Chat: React.FC = () => {
   const [intent, setIntent] = useState<string>('');
@@ -100,34 +100,27 @@ const Chat: React.FC = () => {
         setCurrentSectionIndex(index + 1);
         typeSection(index + 1, secs);
       }
-    }, 30);
+    }, 20);
   };
 
-  // ---- ② description icon の Popover 初期化 ----
-  useEffect(() => {
-    if (descriptionRef.current) {
-      const popover = new Popover(descriptionRef.current, {
-        container: 'body',
-        placement: 'bottom',
-        trigger: 'hover focus',
-        html: true,
-        content: `
-          <div style="max-width: 300px;">
-            <strong>1. 正しい表現かどうか</strong><br />
-            あなたの入力をもとに、英語表現が正しいかチェックします。<br /><br />
-            <strong>2. 他にどのような表現ができるか</strong><br />
-            同じ意味を表す多様な英語表現を提示します。<br /><br />
-            <strong>3. 文章を分析した学習アドバイス</strong><br />
-            あなたの表現をさらに洗練させるためのヒントを提案します。
-          </div>
-        `,
-      });
-      return () => {
-        popover.dispose();
-      };
-    }
-  }, []);
-
+  // // ---- ② description icon の Popover 初期化 ----
+  usePopover(descriptionRef, {
+          container: 'body',
+          placement: 'bottom',
+          trigger: 'hover focus',
+          html: true,
+          content: `
+            <div style="max-width: 300px;">
+              <strong>1. 正しい表現かどうか</strong><br />
+              あなたの入力をもとに、AIが英語表現をチェックします。<br /><br />
+              <strong>2. 他にどのような表現ができるか</strong><br />
+              同じ意味を表す多様な英語表現を提示します。<br /><br />
+              <strong>3. 文章を分析した学習アドバイス</strong><br />
+              あなたの表現をさらに洗練させるためのヒントを提案します。
+            </div>
+          `,
+        })
+  
   const parseSections = (text: string) => {
     const regex = /1\. Correct Expression([\s\S]*?)2\. Five Alternative Natural Expressions([\s\S]*?)3\. Learning Advice([\s\S]*)/;
     const match = text.match(regex);
@@ -232,9 +225,8 @@ const Chat: React.FC = () => {
         <div className="col-11 col-sm-8 col-md-6 col-lg-5 mx-auto">
           {/* タイトル：question icon を削除 */}
           <h1 className="display-4 text-center mb-5 text-primary">
-            Pocket English Teacher
+            AI English Teacher
           </h1>
-
           {/* 入力欄: 日本語 */}
           <div className="mb-3">
             <label className="form-label">表現したい言葉（日本語）:</label>
@@ -284,7 +276,7 @@ const Chat: React.FC = () => {
               {/* ③ description icon を配置し、Popover表示 */}
               <span
                 ref={descriptionRef}
-                className=" text-primary"
+                className="text-primary"
                 style={{ cursor: 'pointer' }}
                 data-bs-toggle="popover"
                 data-bs-trigger="hover focus"
