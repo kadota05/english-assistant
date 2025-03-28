@@ -4,12 +4,11 @@ import { default as UserInputs } from './UserInputs'
 import { default as DescriptionIcon } from './DescriptionIcon'
 import { default as SendButton } from './SendButton'
 import { default as ScrollToBottom } from './ScrollToBottom'
+import { default as AIAnswer } from './AIAnswer'
 
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
 import { useTypewriter } from '../hooks/useTypewriter';
-
-import { transformCardContent } from '../utils/transformer';
 
 
 const Chat: React.FC = () => {
@@ -128,61 +127,13 @@ const Chat: React.FC = () => {
             </div>
           </div>
           
-
-          {/* セクションのタイプライター表示 or カード表示 */}
-          <div className="mt-4">
-            {/* 以下、カードや表示ロジックは省略なく継続 */}
-            {currentSectionIndex >= 0 && (
-              <>
-                {!showSectionCards[0] ? (
-                  <pre className="mb-3" style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-                    {typedSections[0]}
-                  </pre>
-                ) : sections[0] && (
-                  <div className="card shadow-sm mb-3 bg-secondary border-2">
-                    <div className="card-header fw-bold bg-primary text-white">1. 正しい表現</div>
-                    <div className="card-body bg-dark text-white" style={{ whiteSpace: 'pre-wrap' }}>
-                      {transformCardContent(sections[0], 0)}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {currentSectionIndex >= 1 && (
-              <>
-                {!showSectionCards[1] ? (
-                  <pre className="mb-3" style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-                    {typedSections[1]}
-                  </pre>
-                ) : sections[1] && (
-                  <div className="card shadow-sm mb-3 bg-secondary border-2">
-                    <div className="card-header fw-bold bg-primary text-white">2. 他の表現</div>
-                    <div className="card-body bg-dark text-white" style={{ whiteSpace: 'pre-wrap' }}>
-                      {transformCardContent(sections[1], 1)}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {currentSectionIndex >= 2 && (
-              <>
-                {!showSectionCards[2] ? (
-                  <pre className="mb-3" style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-                    {typedSections[2]}
-                  </pre>
-                ) : sections[2] && (
-                  <div className="card shadow-sm mb-3 bg-secondary border-2">
-                    <div className="card-header fw-bold bg-primary text-white">3. 今後のアドバイス</div>
-                    <div className="card-body bg-dark text-white" style={{ whiteSpace: 'pre-wrap' }}>
-                      {transformCardContent(sections[2], 2)}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+          {/* AI回答のタイプライター表示 or カード表示 */}
+          <AIAnswer
+            currentSectionIndex={currentSectionIndex} 
+            showSectionCards={showSectionCards} 
+            typedSections={typedSections}
+            sections={sections}
+          />
         </div>
       </div>
 
