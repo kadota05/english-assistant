@@ -6,6 +6,8 @@ import { default as SendButton } from './SendButton'
 
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
+import { useTypewriter } from '../hooks/useTypewriter';
+
 
 const Chat: React.FC = () => {
   const [intent, setIntent] = useState<string>('');
@@ -20,9 +22,6 @@ const Chat: React.FC = () => {
 
   // セクション情報
   const [sections, setSections] = useState<string[]>(['', '', '']);
-  const [typedSections, setTypedSections] = useState<string[]>(['', '', '']);
-  const [showSectionCards, setShowSectionCards] = useState<boolean[]>([false, false, false]);
-  const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0);
 
   // Enterキー送信用ハンドラ
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -50,9 +49,6 @@ const Chat: React.FC = () => {
     setLoading(true);
     setChatResponse('');
     setSections(['', '', '']);
-    setTypedSections(['', '', '']);
-    setShowSectionCards([false, false, false]);
-    setCurrentSectionIndex(0);
 
     try {
       const responseText = await fetchChatResponse(intent, userExpression);
@@ -69,44 +65,9 @@ const Chat: React.FC = () => {
     if (!chatResponse) return;
     const secs = parseSections(chatResponse);
     setSections(secs);
-    setTypedSections(['', '', '']);
-    setShowSectionCards([false, false, false]);
-    setCurrentSectionIndex(0);
-    typeSection(0, secs);
   }, [chatResponse]);
 
-  const typeSection = (index: number, secs: string[]) => {
-    if (index < 0 || index >= secs.length) return;
-    if (!secs[index]) {
-      setShowSectionCards((prev) => {
-        const newArr = [...prev];
-        newArr[index] = true;
-        return newArr;
-      });
-      setCurrentSectionIndex(index + 1);
-      typeSection(index + 1, secs);
-      return;
-    }
-    let pos = 0;
-    const interval = setInterval(() => {
-      pos++;
-      setTypedSections((prev) => {
-        const newArr = [...prev];
-        newArr[index] = secs[index].substring(0, pos);
-        return newArr;
-      });
-      if (pos >= secs[index].length) {
-        clearInterval(interval);
-        setShowSectionCards((prev) => {
-          const newArr = [...prev];
-          newArr[index] = true;
-          return newArr;
-        });
-        setCurrentSectionIndex(index + 1);
-        typeSection(index + 1, secs);
-      }
-    }, 20);
-  };
+  const { typedSections, showSectionCards, currentSectionIndex } = useTypewriter(sections, 20)
 
   // // ---- ② description icon の Popover 初期化 ----
   usePopover(descriptionRef, {

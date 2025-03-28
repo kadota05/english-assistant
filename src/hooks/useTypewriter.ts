@@ -1,77 +1,60 @@
-// useTypewriter.ts
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
-export type TypeWriterResult = {
+type TypewriterResult = {
   typedSections: string[];
   showSectionCards: boolean[];
   currentSectionIndex: number;
-};
+}
 
-export const useTypewriter = (sections: string[], speed: number): TypeWriterResult => {
-  // セクション数に合わせた初期状態を生成
-  const [typedSections, setTypedSections] = useState<string[]>(Array(sections.length).fill(''));
-  const [showSectionCards, setShowSectionCards] = useState<boolean[]>(Array(sections.length).fill(false));
+export const useTypewriter = (sections: string[], speed: number = 20): TypewriterResult => {
+  const [typedSections, setTypedSections] = useState<string[]>(sections.map(() => ""));
+  const [showSectionCards, setShowSectionCards] = useState<boolean[]>(sections.map(() => false));
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0);
 
-  // 現在動作中のinterval IDを保持するref
-  const intervalRef = useRef<number | null>(null);
-
-  const clearCurrentInterval = () => {
-    if (intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+  useEffect(() => {
+    // セクションが更新されたとき、状態を初期化して最初のセクションからタイピング開始
+    setTypedSections(sections.map(() => ""));
+    setShowSectionCards(sections.map(() => false));
+    setCurrentSectionIndex(0);
+    if (sections.length > 0) {
+      typeSection(0);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sections]);
 
-  const typeSection = (index: number, sections: string[]) => {
+  const typeSection = (index: number) => {
     if (index < 0 || index >= sections.length) return;
-    // 空文字なら即完了扱いにする
+    // セクションが空の場合は、すぐにカード表示に切り替え、次のセクションへ
     if (!sections[index]) {
-      setShowSectionCards(prev => {
+      setShowSectionCards((prev) => {
         const newArr = [...prev];
         newArr[index] = true;
         return newArr;
       });
       setCurrentSectionIndex(index + 1);
-      typeSection(index + 1, sections);
+      typeSection(index + 1);
       return;
     }
     let pos = 0;
-    // 前回のintervalが残っている場合はクリア
-    clearCurrentInterval();
-    intervalRef.current = window.setInterval(() => {
+    const interval = setInterval(() => {
       pos++;
-      setTypedSections(prev => {
+      setTypedSections((prev) => {
         const newArr = [...prev];
         newArr[index] = sections[index].substring(0, pos);
         return newArr;
       });
       if (pos >= sections[index].length) {
-        clearCurrentInterval();
-        setShowSectionCards(prev => {
+        clearInterval(interval);
+        setShowSectionCards((prev) => {
           const newArr = [...prev];
           newArr[index] = true;
           return newArr;
         });
         setCurrentSectionIndex(index + 1);
-        typeSection(index + 1, sections);
+        typeSection(index + 1);
       }
     }, speed);
   };
-
-  useEffect(() => {
-    // 新しいsectionsが渡されたら状態をリセット
-    clearCurrentInterval();
-    setTypedSections(Array(sections.length).fill(''));
-    setShowSectionCards(Array(sections.length).fill(false));
-    setCurrentSectionIndex(0);
-    if (sections.length > 0) {
-      typeSection(0, sections);
-    }
-    return () => {
-      clearCurrentInterval();
-    };
-  }, [sections, speed]);
 
   return { typedSections, showSectionCards, currentSectionIndex };
 };
