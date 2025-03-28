@@ -364,26 +364,6 @@ const Chat: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* ダークテーマのポップオーバーにカスタム */}
-      <style>{`
-        .popover {
-          background-color: #2c2f33 !important;
-          color: #fff !important;
-          border: 2px solid #4c4f53 !important;
-          border-radius: 8px !important;
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
-        }
-        .popover-body{
-          color: #fff !important;
-        }
-        .popover .popover-arrow::before {
-          border-top-color: #4c4f53 !important;
-        }
-        .popover .popover-arrow::after {
-          border-top-color: #2c2f33 !important;
-        }
-      `}</style>
     </div>
   );
 };
