@@ -39,9 +39,13 @@ export const transformSection2 = (text: string): React.ReactNode[] => {
   const lines = text.split('\n').map(preprocessLine);
   return lines.map((line, idx) => {
     if (/^\d+\.\s/.test(line)) {
+      const splitted = line.split('-')
+      const sentence = splitted[0]
+      const explanation = splitted.slice(1).join('-').trim().replace(/^-解説:\s*/, '');
       return (
         <p key={idx}>
-          <strong>{line}</strong>
+          <span className="fw-bold fs-5 text-primary">{sentence}</span><br/>
+          {explanation}
         </p>
       );
     }
@@ -58,7 +62,7 @@ export const transformSection3 = (text: string): React.ReactNode[] => {
       const rest = match[2].replace(/<\/?strong>/g, '');
       return (
         <p key={idx}>
-          <span className="fw-bold text-primary">{prefix}</span>
+          <span className="fw-bold text-warning">{prefix}</span>
           {rest}
         </p>
       );

@@ -34,7 +34,7 @@ export const fetchChatResponse = async (
   -解説: [ここに日本語で解説を書いてください。もしユーザーの英文がすでに自然で正しい場合は「excellent!」または「Your expression is natural and excellent!」と日本語で書いてください。もし不自然または誤りがある場合は、何が不自然・誤りなのかを具体的に指摘し、どのように修正すべきかを日本語で説明してください。必要があれば、この解説パートで再度正しい英文を提示してもかまいません。]
 
   2. Five Alternative Natural Expressions:
-  [以下のフォーマットで、5つの英語表現を提示してください。ただし各表現の説明・解説は（）で囲み日本語で書いてください:
+  [以下のフォーマットで、5つの英語表現を提示してください。ただし各表現の説明・解説は各英語表現の下に改行して日本語で書いてください:
   1. Expression 1
   2. Expression 2
   3. Expression 3
