@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { default as Title } from './Title'
+import { default as UserInputs } from './UserInputs'
+import { default as DescriptionIcon } from './DescriptionIcon'
+import { default as SendButton } from './SendButton'
 
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
@@ -227,70 +230,22 @@ const Chat: React.FC = () => {
         <div className="col-11 col-sm-8 col-md-6 col-lg-5 mx-auto">
           {/* タイトル */}
           <Title />
-          {/* 入力欄: 日本語 */}
-          <div className="mb-3">
-            <label className="form-label">表現したい言葉（日本語）:</label>
-            <input
-              type="text"
-              className={`form-control bg-secondary text-white ${intentError ? 'is-invalid' : ''}`}
-              value={intent}
-              onChange={(e) => setIntent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="例: 今日は晴れていて気分がいいです"
-            />
-            {intentError && <div className="invalid-feedback">{intentError}</div>}
-          </div>
-
-          {/* 入力欄: 英語 */}
-          <div className="mb-3">
-            <label className="form-label">あなたが考えた英語表現（English）:</label>
-            <input
-              type="text"
-              className={`form-control bg-secondary text-white ${userExpressionError ? 'is-invalid' : ''}`}
-              value={userExpression}
-              onChange={(e) => setUserExpression(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="例: Today is sunny and I feel happy"
-            />
-            {userExpressionError && <div className="invalid-feedback">{userExpressionError}</div>}
-          </div>
+          {/* 入力欄 */}
+          <UserInputs 
+            intent={intent}
+            setIntent={setIntent}
+            userExpression={userExpression}
+            setUserExpression={setUserExpression}
+            intentError={intentError}
+            userExpressionError={userExpressionError}
+            handleKeyDown={handleKeyDown}
+          />
 
           {/* ボタン＋description icon */}
           <div className="col-10 col-sm-8 col-md-6 mx-auto my-4 text-center">
             <div className="d-inline-flex align-items-center gap-2">
-              <button
-                className="btn btn-outline-primary rounded-pill fw-semibold"
-                onClick={handleSend}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    考えています...
-                  </>
-                ) : (
-                  '添削してもらう'
-                )}
-              </button>
-
-              {/* ③ description icon を配置し、Popover表示 */}
-              <span
-                ref={descriptionRef}
-                className="text-primary"
-                style={{ cursor: 'pointer' }}
-                data-bs-toggle="popover"
-                data-bs-trigger="hover focus"
-              >
-                {/* SVGアイコン例：description iconっぽいもの */}
-                <svg
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0zm-2 5h4c.552 0 1 .448 1 1s-.448 1-1 1h-4c-.552 0-1-.448-1-1s.448-1 1-1zm6 12H8c-.552 0-1-.448-1-1s.448-1 1-1h8c.552 0 1 .448 1 1s-.448 1-1 1zm0-4H8c-.552 0-1-.448-1-1s.448-1 1-1h8c.552 0 1 .448 1 1s-.448 1-1 1z" />
-                </svg>
-              </span>
+              <SendButton handleSend={handleSend} loading={loading} />
+              <DescriptionIcon descriptionRef={descriptionRef} />
             </div>
           </div>
           
