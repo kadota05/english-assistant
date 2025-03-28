@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { default as Title } from './Title'
+
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
 
@@ -223,10 +225,8 @@ const Chat: React.FC = () => {
     <div className="container-fluid min-vh-100 bg-dark text-white d-flex flex-column pt-5 pb-5 position-relative">
       <div className="row w-100 mx-0">
         <div className="col-11 col-sm-8 col-md-6 col-lg-5 mx-auto">
-          {/* タイトル：question icon を削除 */}
-          <h1 className="display-4 text-center mb-5 text-primary">
-            AI English Teacher
-          </h1>
+          {/* タイトル */}
+          <Title />
           {/* 入力欄: 日本語 */}
           <div className="mb-3">
             <label className="form-label">表現したい言葉（日本語）:</label>
