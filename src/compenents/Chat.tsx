@@ -3,10 +3,13 @@ import { default as Title } from './Title'
 import { default as UserInputs } from './UserInputs'
 import { default as DescriptionIcon } from './DescriptionIcon'
 import { default as SendButton } from './SendButton'
+import { default as ScrollToBottom } from './ScrollToBottom'
 
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
 import { useTypewriter } from '../hooks/useTypewriter';
+
+import { transformCardContent } from '../utils/transformer';
 
 
 const Chat: React.FC = () => {
@@ -100,91 +103,6 @@ const Chat: React.FC = () => {
     }
   };
 
-  const preprocessLine = (line: string) => {
-    let newLine = line.replace(/^[.\s…・:：]+/, '');
-    newLine = newLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    return newLine;
-  };
-
-  const transformSection1 = (text: string) => {
-    const lines = text.split('\n').map((l) => preprocessLine(l));
-    return lines.map((line, idx) => {
-      if (line.startsWith('-正しい英文:')) {
-        const splitted = line.split(':');
-        const prefix = splitted[0];
-        const after = splitted.slice(1).join(':').trim();
-        return (
-          <p key={idx}>
-            <span className="fw-bold text-primary">{prefix}:</span>{' '}
-            <span className="fw-bold fs-5">{after}</span>
-          </p>
-        );
-      }
-      if (line.startsWith('-解説:')) {
-        const splitted = line.split(':');
-        const prefix = splitted[0];
-        const after = splitted.slice(1).join(':').trim();
-        return (
-          <p key={idx}>
-            <span className="fw-bold text-primary">{prefix}:</span>{' '}
-            {after}
-          </p>
-        );
-      }
-      return <p key={idx}>{line}</p>;
-    });
-  };
-
-  const transformSection2 = (text: string) => {
-    const lines = text.split('\n').map((l) => preprocessLine(l));
-    return lines.map((line, idx) => {
-      if (/^\d+\.\s/.test(line)) {
-        return (
-          <p key={idx}>
-            <strong>{line}</strong>
-          </p>
-        );
-      }
-      return <p key={idx}>{line}</p>;
-    });
-  };
-
-  const transformSection3 = (text: string) => {
-    const lines = text.split('\n').map((l) => preprocessLine(l));
-    return lines.map((line, idx) => {
-      const match = line.match(/^(\d+\.\s.*?:)(.*)/);
-      if (match) {
-        const prefix = match[1].replace(/<\/?strong>/g, '');
-        const rest = match[2].replace(/<\/?strong>/g, '');
-        return (
-          <p key={idx}>
-            <span className="fw-bold text-primary">{prefix}</span>
-            {rest}
-          </p>
-        );
-      }
-      return <p key={idx}>{line.replace(/<\/?strong>/g, '')}</p>;
-    });
-  };
-
-  const transformCardContent = (text: string, index: number) => {
-    if (index === 0) {
-      return transformSection1(text);
-    } else if (index === 1) {
-      return transformSection2(text);
-    } else if (index === 2) {
-      return transformSection3(text);
-    }
-    return text;
-  };
-
-  const scrollToBottom = () => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
   return (
     <div className="container-fluid min-vh-100 bg-dark text-white d-flex flex-column pt-5 pb-5 position-relative">
       <div className="row w-100 mx-0">
@@ -271,13 +189,7 @@ const Chat: React.FC = () => {
       {/* 画面下部へ移動ボタン (AI回答があるときに表示) */}
       {chatResponse && chatResponse.trim() && (
         <div className="position-fixed start-50 translate-middle-x" style={{ bottom: '10px' }}>
-          <button
-            className="btn btn-light d-flex align-items-center justify-content-center rounded-circle"
-            style={{ width: '50px', height: '50px' }}
-            onClick={scrollToBottom}
-          >
-            <span className="fs-4">&darr;</span>
-          </button>
+          <ScrollToBottom />
         </div>
       )}
     </div>
