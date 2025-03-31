@@ -12,7 +12,7 @@ import {
 import { fetchChatResponse } from './services/aiService';
 import { usePopover } from './hooks/usePopover';
 import { useTypewriter } from './hooks/useTypewriter';
-import { getChatLog } from './store/chatLogService';
+import { ChatLog, getChatLog, addChatLog } from './store/chatLogService';
 
 function App() {
   const [intent, setIntent] = useState<string>('');
@@ -28,6 +28,10 @@ function App() {
   const [sections, setSections] = useState<string[]>(['', '', '']);
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
 
+  // indexedDB系
+  const [changeDB, setChangeDB] = useState<boolean>(false)
+  
+  
   // 送信時
   const handleSend = async () => {
     setIsReviewMode(false);
@@ -78,6 +82,22 @@ function App() {
     setSections(secs);
     if (!isReviewMode) {
       startTypewriterEffect(secs);
+
+      (async () => {
+        const newLog: ChatLog = {
+          UserIntent: intent,
+          UserExpression: userExpression,
+          chatResponse: chatResponse,
+          timestamp: Date.now(),
+        };
+        try{
+          const key = await addChatLog(newLog);
+          console.log(`チャットログが追加されました（ID: ${key}）`)
+        } catch(error){
+          console.error("チャットログを追加できませんでした:", error)
+        }
+        setChangeDB(true);
+      })();
     }
   }, [chatResponse]);
 
@@ -132,7 +152,7 @@ function App() {
           <div className="container-fluid d-flex align-items-center justify-content-between">
             {/* 左側: OffCanvas トグルボタン */}
             <div style={{ width: '50px' }}>
-              <OffCanvas handlePastChat={handlePastChat} />
+              <OffCanvas changeDB={changeDB} handlePastChat={handlePastChat} />
             </div>
             {/* 中央: タイトル */}
             <div className="text-center flex-grow-1">

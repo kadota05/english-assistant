@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ChatLog, getAllChatLogs } from '../store/chatLogService';
 
 type Props = {
+  changeDB: boolean
   handlePastChat: (logID: number) => void;
 };
 
-const OffCanvas: React.FC<Props> = ({ handlePastChat }) => {
+const OffCanvas: React.FC<Props> = ({ changeDB, handlePastChat }) => {
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const OffCanvas: React.FC<Props> = ({ handlePastChat }) => {
       }
     };
     fetchChatLogs();
-  }, []);
+  }, [changeDB]);
 
   const closeOffCanvas = () => {
     const closeButton = document.querySelector('[data-bs-dismiss="offcanvas"]') as HTMLElement;
