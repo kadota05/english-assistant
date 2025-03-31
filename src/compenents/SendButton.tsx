@@ -8,7 +8,7 @@ type Props = {
 const SendButton: React.FC<Props> = ( {handleSend, loading} ) => {
     return (
         <button
-            className="btn btn-outline-primary rounded-pill fw-semibold"
+            className="btn btn-outline-primary rounded-pill fw-semibold mx-1"
             onClick={handleSend}
             disabled={loading}
             >

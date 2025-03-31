@@ -31,7 +31,9 @@ function App() {
   
   const handleReset = () => {
     setIntent('');
+    setIntentError('');
     setUserExpression('');
+    setUserExpressionError('');
     setChatResponse('');
     setSections(['', '', '']);
   }
@@ -185,8 +187,8 @@ function App() {
             />
             <div className="text-center my-4">
               <div className="d-inline-flex align-items-center gap-2">
-                <SendButton handleSend={handleSend} loading={loading} />
                 <DescriptionIcon descriptionRef={descriptionRef} />
+                <SendButton handleSend={handleSend} loading={loading} />
                 <ResetButton handleReset={handleReset} />
               </div>
             </div>
