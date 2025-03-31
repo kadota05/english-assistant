@@ -43,7 +43,7 @@ main {
 .fixed-top {
   width: 100%;
   /* ヘッダーの背景色がノッチ領域にも広がるようにする */
-  background-color: #000;
+  background-color: #212529;
   /* セーフエリア分を考慮する */
   padding-top: env(safe-area-inset-top);
   padding-top: constant(safe-area-inset-top);
