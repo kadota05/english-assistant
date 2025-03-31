@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { ChatLog, getAllChatLogs } from '../store/chatLogService';
+import { ChatLog, getAllChatLogs, deleteChatLog } from '../store/chatLogService';
 
 type Props = {
-  changeDB: boolean
   handlePastChat: (logID: number) => void;
 };
 
-const OffCanvas: React.FC<Props> = ({ changeDB, handlePastChat }) => {
+const OffCanvas: React.FC<Props> = ({ handlePastChat }) => {
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
 
   useEffect(() => {
+    const offcanvasElement = document.getElementById('offcanvasExample');
     const fetchChatLogs = async () => {
       try {
         const logs = await getAllChatLogs();
@@ -18,8 +18,13 @@ const OffCanvas: React.FC<Props> = ({ changeDB, handlePastChat }) => {
         console.error("チャットログの取得に失敗しました", error);
       }
     };
-    fetchChatLogs();
-  }, [changeDB]);
+    // offcanvas が表示されたときにフェッチ
+    offcanvasElement?.addEventListener('shown.bs.offcanvas', fetchChatLogs);
+
+    return () => {
+      offcanvasElement?.removeEventListener('shown.bs.offcanvas', fetchChatLogs);
+    };
+  }, []);
 
   const closeOffCanvas = () => {
     const closeButton = document.querySelector('[data-bs-dismiss="offcanvas"]') as HTMLElement;
@@ -27,6 +32,17 @@ const OffCanvas: React.FC<Props> = ({ changeDB, handlePastChat }) => {
       closeButton.click();
     }
   };
+  
+  const handleDelete = async (id: number) => {
+    if (window.confirm("このチャットログを削除しますか？")) {
+      try{
+        await deleteChatLog(id);
+        setChatLogs(prev => prev.filter(log=>log.id !== id));
+      } catch(error){
+        console.error("削除エラー", error)
+      }
+    }
+  }
 
   return (
     <>
@@ -60,21 +76,39 @@ const OffCanvas: React.FC<Props> = ({ changeDB, handlePastChat }) => {
         </div>
         <div className="offcanvas-body">
           <div className="list-group">
-            {chatLogs.map((chatLog: ChatLog) => (
-              <a
-                key={chatLog.id}
-                onClick={() => {
+          {chatLogs.map((chatLog: ChatLog) => (
+            <div
+              key={chatLog.id}
+              className="list-group-item list-group-item-action list-group-item-dark d-flex align-items-center"
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (chatLog.id !== undefined) {
+                  handlePastChat(chatLog.id);
+                  closeOffCanvas();
+                }
+              }}
+            >
+              {/* ユーザー意図部分：flex-growで幅を最大限確保し、text-truncateで溢れるテキストは省略表示 */}
+              <span className="flex-grow-1 text-truncate" style={{ marginRight: '8px' }}>
+                {chatLog.UserIntent}
+              </span>
+              {/* 削除ボタン */}
+              <button
+                className="btn btn-link text-secondary p-0"
+                onClick={(e) => {
+                  e.stopPropagation(); // 親の onClick をキャンセル
                   if (chatLog.id !== undefined) {
-                    handlePastChat(chatLog.id);
-                    closeOffCanvas();
+                    handleDelete(chatLog.id);
                   }
                 }}
-                className="list-group-item list-group-item-action list-group-item-dark"
-                style={{ cursor: 'pointer' }}
               >
-                {chatLog.UserIntent}
-              </a>
-            ))}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash3-fill" viewBox="0 0 16 16">
+                  <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                </svg>
+              </button>
+            </div>
+          ))}
+
           </div>
         </div>
       </div>

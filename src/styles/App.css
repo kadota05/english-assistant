@@ -46,6 +46,15 @@ main {
   background-color: #212529;
   padding-top: env(safe-area-inset-top);
 }
+/* ユーザー意図部分のホバー */
+.user-intent {
+  transition: color 0.3s ease;
+}
+.user-intent:hover {
+  color: #ffffff; /* 好みの色に変更 */
+}
+
+
 
 
 .popover {

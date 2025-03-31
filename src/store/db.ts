@@ -16,15 +16,6 @@ export function openDB(): Promise<IDBDatabase> {
           autoIncrement: true,
         });
         store.createIndex("by_timestamp", "timestamp", { unique: false });
-        
-        // ダミーデータの追加
-        const dummyData: ChatLog = {
-          UserIntent: "Sample Intent",
-          UserExpression: "Sample User Expression",
-          chatResponse: "This is a dummy chat response.",
-          timestamp: Date.now(), // 現在時刻をセット
-        };
-        store.add(dummyData);
       }
     };
 

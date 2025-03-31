@@ -27,9 +27,6 @@ function App() {
   // セクション情報
   const [sections, setSections] = useState<string[]>(['', '', '']);
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
-
-  // indexedDB系
-  const [changeDB, setChangeDB] = useState<boolean>(false)
   
   
   // 送信時
@@ -96,7 +93,6 @@ function App() {
         } catch(error){
           console.error("チャットログを追加できませんでした:", error)
         }
-        setChangeDB(true);
       })();
     }
   }, [chatResponse]);
@@ -152,7 +148,7 @@ function App() {
           <div className="container-fluid d-flex align-items-center justify-content-between">
             {/* 左側: OffCanvas トグルボタン */}
             <div style={{ width: '50px' }}>
-              <OffCanvas changeDB={changeDB} handlePastChat={handlePastChat} />
+              <OffCanvas handlePastChat={handlePastChat} />
             </div>
             {/* 中央: タイトル */}
             <div className="text-center flex-grow-1">
