@@ -1,31 +1,49 @@
-import { useState, useEffect } from 'react';
+// useTypewriter.ts
+import { useState, useRef } from 'react';
 
-type TypewriterResult = {
+export type TypewriterResult = {
   typedSections: string[];
   showSectionCards: boolean[];
   currentSectionIndex: number;
-}
+  startTypewriterEffect: (finalSections: string[]) => void;
+};
 
-export const useTypewriter = (sections: string[], speed: number = 20): TypewriterResult => {
-  const [typedSections, setTypedSections] = useState<string[]>(sections.map(() => ""));
-  const [showSectionCards, setShowSectionCards] = useState<boolean[]>(sections.map(() => false));
+export const useTypewriter = (speed: number = 20): TypewriterResult => {
+  // typedSections: 現在タイプされている各セクションの文字列
+  const [typedSections, setTypedSections] = useState<string[]>([]);
+  // showSectionCards: 各セクションのカード表示（タイピング完了）を示すフラグ
+  const [showSectionCards, setShowSectionCards] = useState<boolean[]>([]);
+  // currentSectionIndex: 現在どのセクションをタイピング中か
   const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0);
 
-  useEffect(() => {
-    // セクションが更新されたとき、状態を初期化して最初のセクションからタイピング開始
-    setTypedSections(sections.map(() => ""));
-    setShowSectionCards(sections.map(() => false));
+  // 外部から渡された最終的な各セクションの文字列を保持するための ref
+  const sectionsRef = useRef<string[]>([]);
+
+  /**
+   * startTypewriterEffect
+   * 外部から呼び出し、finalSections（完成すべき各セクションの配列）を元にタイピング表示を開始する
+   */
+  const startTypewriterEffect = (finalSections: string[]) => {
+    sectionsRef.current = finalSections;
+    // 状態を初期化
+    setTypedSections(finalSections.map(() => ""));
+    setShowSectionCards(finalSections.map(() => false));
     setCurrentSectionIndex(0);
-    if (sections.length > 0) {
+    if (finalSections.length > 0) {
       typeSection(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sections]);
+  };
 
+  /**
+   * typeSection
+   * 指定した index のセクションについて、タイピング効果をシミュレートする
+   */
   const typeSection = (index: number) => {
-    if (index < 0 || index >= sections.length) return;
+    const finalSections = sectionsRef.current;
+    if (index < 0 || index >= finalSections.length) return;
+
     // セクションが空の場合は、すぐにカード表示に切り替え、次のセクションへ
-    if (!sections[index]) {
+    if (!finalSections[index]) {
       setShowSectionCards((prev) => {
         const newArr = [...prev];
         newArr[index] = true;
@@ -35,15 +53,18 @@ export const useTypewriter = (sections: string[], speed: number = 20): Typewrite
       typeSection(index + 1);
       return;
     }
+
     let pos = 0;
     const interval = setInterval(() => {
       pos++;
       setTypedSections((prev) => {
         const newArr = [...prev];
-        newArr[index] = sections[index].substring(0, pos);
+        // 指定したセクションの先頭から pos 文字までを表示
+        newArr[index] = finalSections[index].substring(0, pos);
         return newArr;
       });
-      if (pos >= sections[index].length) {
+      // タイピングが完了したら
+      if (pos >= finalSections[index].length) {
         clearInterval(interval);
         setShowSectionCards((prev) => {
           const newArr = [...prev];
@@ -51,10 +72,11 @@ export const useTypewriter = (sections: string[], speed: number = 20): Typewrite
           return newArr;
         });
         setCurrentSectionIndex(index + 1);
+        // 次のセクションがあれば、再帰的にタイピング開始
         typeSection(index + 1);
       }
     }, speed);
   };
 
-  return { typedSections, showSectionCards, currentSectionIndex };
+  return { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect };
 };

@@ -14,7 +14,22 @@ h1{
 }
 
 
+/* 例: offcanvasの幅を300pxから250pxに変更 */
+.offcanvas {
+  width: 300px !important;
+}
+.navbar-toggler:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
+
+html, body {
+  margin: 0;
+  padding: 0;
+  /* Bootstrapのbg-darkに近い暗い色を指定 */
+  background-color: #212529; 
+}
 
 
 .popover {
