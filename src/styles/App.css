@@ -27,7 +27,6 @@ h1{
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
   /* Bootstrapのbg-darkに近い暗い色を指定 */
   background-color: #212529; 
 }
