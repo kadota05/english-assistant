@@ -7,7 +7,8 @@ import {
   SendButton,
   ScrollToBottom,
   AIAnswer,
-  OffCanvas
+  OffCanvas,
+  ResetButton
 } from './compenents/index';
 import { fetchChatResponse } from './services/aiService';
 import { usePopover } from './hooks/usePopover';
@@ -28,7 +29,13 @@ function App() {
   const [sections, setSections] = useState<string[]>(['', '', '']);
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
   
-  
+  const handleReset = () => {
+    setIntent('');
+    setUserExpression('');
+    setChatResponse('');
+    setSections(['', '', '']);
+  }
+
   // 送信時
   const handleSend = async () => {
     setIsReviewMode(false);
@@ -166,7 +173,7 @@ function App() {
       */}
       <main className="container pt-5 pb-5" style={{ marginTop: '70px' }}>
         <div className="row justify-content-center">
-          <div className="col-12 col-sm-8 col-md-6 col-lg-5">
+          <div className="col-10 col-sm-8 col-md-6 col-lg-5">
             <UserInputs
               intent={intent}
               setIntent={setIntent}
@@ -180,6 +187,7 @@ function App() {
               <div className="d-inline-flex align-items-center gap-2">
                 <SendButton handleSend={handleSend} loading={loading} />
                 <DescriptionIcon descriptionRef={descriptionRef} />
+                <ResetButton handleReset={handleReset} />
               </div>
             </div>
             <AIAnswer

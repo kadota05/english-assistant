@@ -5,5 +5,6 @@ import { default as SendButton } from './SendButton'
 import { default as ScrollToBottom } from './ScrollToBottom'
 import { default as AIAnswer } from './AIAnswer'
 import { default as OffCanvas } from './OffCanvas'
+import { default as ResetButton } from './ResetButton'
 
-export {Title, UserInputs, DescriptionIcon, SendButton, ScrollToBottom, AIAnswer, OffCanvas}
+export {Title, UserInputs, DescriptionIcon, SendButton, ScrollToBottom, AIAnswer, OffCanvas, ResetButton}
