@@ -127,8 +127,8 @@ function App() {
   return (
     <div className="App bg-dark text-white min-vh-100">
       {/* ヘッダー */}
-      <header>
-        <nav className="navbar navbar-dark bg-dark fixed-top" style={{ height: '70px', paddingTop: 'env(safe-area-inset-top)' }}>
+      <header className="fixed-top">
+        <nav className="navbar navbar-dark bg-dark fixed-top" style={{ height: '70px' }}>
           <div className="container-fluid d-flex align-items-center justify-content-between">
             {/* 左側: OffCanvas トグルボタン */}
             <div style={{ width: '50px' }}>
@@ -148,7 +148,7 @@ function App() {
         メインコンテンツ 
         marginTop: ヘッダーの高さ分(70px)を確保
       */}
-      <main className="container pt-5 pb-5" style={{ marginTop: 'calc(70px + env(safe-area-inset-top))' }}>
+      <main className="container pt-5 pb-5" style={{ marginTop: '70px' }}>
         <div className="row justify-content-center">
           <div className="col-12 col-sm-8 col-md-6 col-lg-5">
             <UserInputs
