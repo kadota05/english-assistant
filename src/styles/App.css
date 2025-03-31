@@ -42,12 +42,13 @@ main {
 }
 .fixed-top {
   width: 100%;
-  /* ヘッダーの背景色がノッチ領域にも広がるようにする */
+  height: calc(70px + env(safe-area-inset-top));
   background-color: #212529;
-  /* セーフエリア分を考慮する */
   padding-top: env(safe-area-inset-top);
+  /* 古いiOS向け */
   padding-top: constant(safe-area-inset-top);
 }
+
 
 .popover {
   background-color: #2c2f33 !important;

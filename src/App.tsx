@@ -127,8 +127,8 @@ function App() {
   return (
     <div className="App bg-dark text-white min-vh-100">
       {/* ヘッダー */}
-      <header className="fixed-top">
-        <nav className="navbar navbar-dark bg-dark fixed-top" style={{ height: '70px' }}>
+      <header>
+        <nav className="navbar navbar-dark bg-dark fixed-top">
           <div className="container-fluid d-flex align-items-center justify-content-between">
             {/* 左側: OffCanvas トグルボタン */}
             <div style={{ width: '50px' }}>
