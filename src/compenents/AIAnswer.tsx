@@ -7,7 +7,7 @@ type Props = {
     showSectionCards: boolean[];
     typedSections: string[];
     sections: string[];
-    isReviewMode: boolean; // 追加
+    isReviewMode: boolean; //いきなりカード表示かタイプライター表示か決める 
 }
 
 const AIAnswer: React.FC<Props> = ({ currentSectionIndex, showSectionCards, typedSections, sections, isReviewMode }) => {

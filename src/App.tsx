@@ -35,7 +35,6 @@ function App() {
     setUserExpression('');
     setUserExpressionError('');
     setChatResponse('');
-    setSections(['', '', '']);
   }
 
   // 送信時
@@ -70,6 +69,7 @@ function App() {
     }
   };
 
+  const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect } = useTypewriter(20);
   // 過去ログ選択時
   const handlePastChat = async (logID: number) => {
     setIsReviewMode(true);
@@ -77,9 +77,12 @@ function App() {
     setIntent(pastLog.UserIntent);
     setUserExpression(pastLog.UserExpression);
     setChatResponse(pastLog.chatResponse);
+    
+    // chatResponse をパースして各セクションを取得
+    const secs = parseSections(pastLog.chatResponse);
+    // レビュー用モードなので、finishTypewriterEffect を呼んで currentSectionIndex をセクション数分（たとえば 3 なら 3）に更新
+    finishTypewriterEffect(secs);
   };
-
-  const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect } = useTypewriter(20);
 
   // chatResponse更新 → 3セクションに分割
   useEffect(() => {

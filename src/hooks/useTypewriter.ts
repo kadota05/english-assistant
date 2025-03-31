@@ -6,6 +6,7 @@ export type TypewriterResult = {
   showSectionCards: boolean[];
   currentSectionIndex: number;
   startTypewriterEffect: (finalSections: string[]) => void;
+  finishTypewriterEffect: (finalSections: string[]) => void;
 };
 
 export const useTypewriter = (speed: number = 20): TypewriterResult => {
@@ -33,7 +34,13 @@ export const useTypewriter = (speed: number = 20): TypewriterResult => {
       typeSection(0);
     }
   };
-
+  // 新規追加: 全セクションを即時表示する関数
+  const finishTypewriterEffect = (finalSections: string[]) => {
+    sectionsRef.current = finalSections;
+    setTypedSections(finalSections); // 全文表示
+    setShowSectionCards(finalSections.map(() => true)); // 全カード表示
+    setCurrentSectionIndex(finalSections.length); // currentSectionIndex を全セクション数に
+  };
   /**
    * typeSection
    * 指定した index のセクションについて、タイピング効果をシミュレートする
@@ -78,5 +85,5 @@ export const useTypewriter = (speed: number = 20): TypewriterResult => {
     }, speed);
   };
 
-  return { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect };
+  return { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect };
 };
