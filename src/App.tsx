@@ -35,6 +35,7 @@ function App() {
     setUserExpression('');
     setUserExpressionError('');
     setChatResponse('');
+    setSections(['', '', '']);
   }
 
   // 送信時
