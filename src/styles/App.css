@@ -30,6 +30,16 @@ html, body {
   /* Bootstrapのbg-darkに近い暗い色を指定 */
   background-color: #212529; 
 }
+header {
+  /* ノッチ部分（上部のセーフエリア）の高さをパディング上部に追加 */
+  padding-top: env(safe-area-inset-top);
+}
+
+/* メインコンテンツにも必要なら、ノッチ分の余白を追加 */
+main {
+  /* ヘッダー固定の場合、ヘッダーの高さ + safe-area-inset-top 分の余白を確保 */
+  margin-top: calc(70px + env(safe-area-inset-top));
+}
 
 
 .popover {
