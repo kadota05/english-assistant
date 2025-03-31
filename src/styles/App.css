@@ -45,8 +45,6 @@ main {
   height: calc(70px + env(safe-area-inset-top));
   background-color: #212529;
   padding-top: env(safe-area-inset-top);
-  /* 古いiOS向け */
-  padding-top: constant(safe-area-inset-top);
 }
 
 
