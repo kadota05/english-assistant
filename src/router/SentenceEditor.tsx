@@ -70,6 +70,20 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     } finally {
       setLoading(false);
     }
+    (async () => {
+      const newLog: ChatLog = {
+        UserIntent: intent,
+        UserExpression: userExpression,
+        chatResponse: chatResponse,
+        timestamp: Date.now(),
+      };
+      try{
+        const key = await addChatLog(newLog);
+        console.log(`チャットログが追加されました（ID: ${key}）`)
+      } catch(error){
+        console.error("チャットログを追加できませんでした:", error)
+      }
+    })();
   };
 
   const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect } = useTypewriter(20);
@@ -94,21 +108,6 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     setSections(secs);
     if (!isReviewMode) {
       startTypewriterEffect(secs);
-
-      (async () => {
-        const newLog: ChatLog = {
-          UserIntent: intent,
-          UserExpression: userExpression,
-          chatResponse: chatResponse,
-          timestamp: Date.now(),
-        };
-        try{
-          const key = await addChatLog(newLog);
-          console.log(`チャットログが追加されました（ID: ${key}）`)
-        } catch(error){
-          console.error("チャットログを追加できませんでした:", error)
-        }
-      })();
     }
   }, [chatResponse]);
 
