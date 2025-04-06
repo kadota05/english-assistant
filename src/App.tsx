@@ -36,7 +36,7 @@ const App: React.FC = () => {
       </div>
       <Routes>
           <Route path="/" element={<SentenceEditor chatResponse={chatResponse} setChatResponse={setChatResponse} selectedChat={selectedChat} />} />
-          <Route path="/chat" element={<AdaptiveExercise chatResponse={chatResponse} />} />
+          <Route path="/chat" element={<AdaptiveExercise selectedChat={selectedChat} />} />
         </Routes>
       </main>
     </div>
