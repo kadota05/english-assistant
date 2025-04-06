@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './styles/App.css';
 import {
-  Header,
   UserInputs,
   DescriptionIcon,
   SendButton,

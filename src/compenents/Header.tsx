@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ( { handlePastChat } ) => {
               <Title />
             </div>
             {/* 右側: 空要素（左側と同じ幅でタイトルを中央に配置） */}
-            <div style={{ width: '50px' }}></div>
+						<></>
           </div>
         </nav>
       </header>
