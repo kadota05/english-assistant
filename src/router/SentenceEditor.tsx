@@ -8,13 +8,17 @@ import {
   ScrollToBottom,
   AIAnswer,
   ResetButton
-} from './compenents/index';
-import { fetchChatResponse } from './services/aiService';
-import { usePopover } from './hooks/usePopover';
-import { useTypewriter } from './hooks/useTypewriter';
-import { ChatLog, getChatLog, addChatLog } from './store/chatLogService';
+} from '../compenents/index';
+import { fetchChatResponse } from '../services/aiService';
+import { usePopover } from '../hooks/usePopover';
+import { useTypewriter } from '../hooks/useTypewriter';
+import { ChatLog, addChatLog } from '../store/chatLogService';
 
-function App() {
+type SentenceEditorProps = {
+    selectedChat: ChatLog | null;
+}
+
+const SentenceEditor: React.FC<SentenceEditorProps> = ( { selectedChat } ) => {
   const [intent, setIntent] = useState<string>('');
   const [userExpression, setUserExpression] = useState<string>('');
   const [chatResponse, setChatResponse] = useState<string>('');
@@ -71,18 +75,18 @@ function App() {
 
   const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect } = useTypewriter(20);
   // 過去ログ選択時
-  const handlePastChat = async (logID: number) => {
-    setIsReviewMode(true);
-    const pastLog = await getChatLog(logID);
-    setIntent(pastLog.UserIntent);
-    setUserExpression(pastLog.UserExpression);
-    setChatResponse(pastLog.chatResponse);
-    
-    // chatResponse をパースして各セクションを取得
-    const secs = parseSections(pastLog.chatResponse);
-    // レビュー用モードなので、finishTypewriterEffect を呼んで currentSectionIndex をセクション数分（たとえば 3 なら 3）に更新
-    finishTypewriterEffect(secs);
-  };
+  useEffect(() => {
+    if (selectedChat) {
+        setIsReviewMode(true);
+        setIntent(selectedChat.UserIntent);
+        setUserExpression(selectedChat.UserExpression);
+        setChatResponse(selectedChat.chatResponse);
+        // chatResponse をパースして各セクションを取得
+        const secs = parseSections(selectedChat.chatResponse);
+        // レビュー用モードなので、finishTypewriterEffect を呼んで currentSectionIndex をセクション数分（たとえば 3 なら 3）に更新
+        finishTypewriterEffect(secs);
+    }
+  }, [selectedChat])
 
   // chatResponse更新 → 3セクションに分割
   useEffect(() => {
@@ -151,52 +155,43 @@ function App() {
   };
 
   return (
-    <div className="App bg-dark text-white min-vh-100">
-      {/* ヘッダー */}
-      <Header handlePastChat={handlePastChat} />
-
-      {/*
-        メインコンテンツ 
-        marginTop: ヘッダーの高さ分(70px)を確保
-      */}
-      <main className="container pt-5 pb-5" style={{ marginTop: '70px' }}>
-        <div className="row justify-content-center">
-          <div className="col-10 col-sm-8 col-md-6 col-lg-5">
-            <UserInputs
-              intent={intent}
-              setIntent={setIntent}
-              userExpression={userExpression}
-              setUserExpression={setUserExpression}
-              intentError={intentError}
-              userExpressionError={userExpressionError}
-              handleKeyDown={handleKeyDown}
-            />
-            <div className="text-center my-4">
-              <div className="d-inline-flex align-items-center gap-2">
-                <DescriptionIcon descriptionRef={descriptionRef} />
-                <SendButton handleSend={handleSend} loading={loading} />
-                <ResetButton handleReset={handleReset} />
-              </div>
+    <>
+    <div className="row justify-content-center">
+        <div className="col-10 col-sm-8 col-md-6 col-lg-5">
+        <UserInputs
+            intent={intent}
+            setIntent={setIntent}
+            userExpression={userExpression}
+            setUserExpression={setUserExpression}
+            intentError={intentError}
+            userExpressionError={userExpressionError}
+            handleKeyDown={handleKeyDown}
+        />
+        <div className="text-center my-4">
+            <div className="d-inline-flex align-items-center gap-2">
+            <DescriptionIcon descriptionRef={descriptionRef} />
+            <SendButton handleSend={handleSend} loading={loading} />
+            <ResetButton handleReset={handleReset} />
             </div>
-            <AIAnswer
-              currentSectionIndex={currentSectionIndex}
-              showSectionCards={showSectionCards}
-              typedSections={typedSections}
-              sections={sections}
-              isReviewMode={isReviewMode}
-            />
-          </div>
         </div>
-
-        {/* 下部へ移動ボタン */}
-        {chatResponse && chatResponse.trim() && (
-          <div className="position-fixed start-50 translate-middle-x" style={{ bottom: '10px' }}>
-            <ScrollToBottom />
-          </div>
-        )}
-      </main>
+        <AIAnswer
+            currentSectionIndex={currentSectionIndex}
+            showSectionCards={showSectionCards}
+            typedSections={typedSections}
+            sections={sections}
+            isReviewMode={isReviewMode}
+        />
+        </div>
     </div>
+
+
+    {chatResponse && chatResponse.trim() && (
+        <div className="position-fixed start-50 translate-middle-x" style={{ bottom: '10px' }}>
+        <ScrollToBottom />
+        </div>
+    )}
+    </>
   );
 }
 
-export default App;
+export default SentenceEditor;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChatLog, getAllChatLogs, deleteChatLog } from '../store/chatLogService';
 
 type Props = {
-  handlePastChat: (logID: number) => void;
+  handlePastChat: (logID: number) => Promise<void>;
 };
 
 const OffCanvas: React.FC<Props> = ({ handlePastChat }) => {

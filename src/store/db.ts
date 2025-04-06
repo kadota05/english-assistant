@@ -1,6 +1,3 @@
-// store/db.ts
-import { ChatLog } from './chatLogService';
-
 export function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("ChatDB", 1);
