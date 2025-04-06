@@ -9,6 +9,7 @@ import { default as Navbar } from './router/Navbar'
 import { ChatLog, getChatLog } from './store/chatLogService';
 
 const App: React.FC = () => {
+  const [chatResponse, setChatResponse] = useState<string>('');
   const [selectedChat, setSelectedChat] = useState<ChatLog | null>(null);
 
   // 過去ログ選択時
@@ -34,9 +35,8 @@ const App: React.FC = () => {
         <Navbar />
       </div>
       <Routes>
-          <Route path="/" element={<SentenceEditor selectedChat={selectedChat} />} />
-          {/* ChatPageに選択されたチャット情報を渡す */}
-          <Route path="/chat" element={<AdaptiveExercise />} />
+          <Route path="/" element={<SentenceEditor chatResponse={chatResponse} setChatResponse={setChatResponse} selectedChat={selectedChat} />} />
+          <Route path="/chat" element={<AdaptiveExercise chatResponse={chatResponse} />} />
         </Routes>
       </main>
     </div>

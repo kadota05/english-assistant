@@ -59,3 +59,32 @@ export const fetchChatResponse = async (
     throw error;
   }
 };
+
+
+export const fetchExerciseResponse = async (chatResponse: string): Promise<string> => {
+  const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+  if (!API_KEY) {
+    throw new Error("GEMINI API KEY is not defined in the environment variables.");
+  }
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `
+  You have access to "chatResponse," which describes the user’s missing skills and areas for improvement in English. Based on that information, create exactly 10 Japanese-to-English translation exercises to help address these weaknesses. Output only 10 lines, and for each line use this exact format:
+  [number]. [Japanese sentence] / [Correct English translation] (簡単な日本語での解説)
+  For example (not actual content):
+  これはペンです / This is a pen (英語の文をシンプルに紹介する文型です)
+  Do not include any extra explanations or formatting beyond those 10 lines.
+  [chatresponse]: ${chatResponse}
+  `.trim();
+
+  try {
+    // プロンプトをもとにコンテンツ生成リクエストを送信
+    const result = await model.generateContent(prompt);
+    // result.response は EnhancedGenerateContentResponse 型（オブジェクト）と仮定し、その中の text プロパティを返す
+    return result.response.text();
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    throw error;
+  }
+};

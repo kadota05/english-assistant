@@ -13,13 +13,14 @@ import { useTypewriter } from '../hooks/useTypewriter';
 import { ChatLog, addChatLog } from '../store/chatLogService';
 
 type SentenceEditorProps = {
+    chatResponse: string;
+    setChatResponse: React.Dispatch<React.SetStateAction<string>>;
     selectedChat: ChatLog | null;
 }
 
-const SentenceEditor: React.FC<SentenceEditorProps> = ( { selectedChat } ) => {
+const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatResponse, selectedChat } ) => {
   const [intent, setIntent] = useState<string>('');
   const [userExpression, setUserExpression] = useState<string>('');
-  const [chatResponse, setChatResponse] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [intentError, setIntentError] = useState<string>('');
   const [userExpressionError, setUserExpressionError] = useState<string>('');
