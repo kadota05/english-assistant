@@ -70,9 +70,23 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat }) => 
             position: absolute;
             right: 1rem;
           }
+          /* advice-box クラスを洗練されたモダンな印象に調整 */
+          .advice-box {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 12px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #001f3f, #000000);
+            border: 1px solid #007bff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+          }
         `}
       </style>
-      <div className="text-center mb-3">まだ開発中だよ</div>
+      <div className="text-danger text-center mb-3">まだ開発中だよ</div>
       {selectedChat ? (
         <div className="text-center mb-3">作成できます！</div>
       ) : (
@@ -80,53 +94,53 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat }) => 
       )}
 
       <div className="text-center">
-          <button className="btn btn-primary" onClick={handleSend}>
-            作成
-          </button>
+        <button className="btn btn-primary" onClick={handleSend}>
+          作成
+        </button>
+      </div>
+
+      {loading && <div className="text-center mt-2">作問しています</div>}
+
+      {/* 抽出した[ ]部分をアドバイス表示用にスタイル */}
+      {bracketedText && (
+        <div className="advice-box">
+          <p className="mb-0">{bracketedText}</p>
         </div>
+      )}
 
-        {loading && <div className="text-center mt-2">作問しています</div>}
-
-        {/* Display the extracted text without square brackets */}
-        {bracketedText && (
-          <div className="mt-4 text-center">
-            <p>{bracketedText}</p>
-          </div>
-        )}
-
-        {restOfResponse !== '' && items.length > 0 && (
-          <div className="accordion mt-4" id="exerciseAccordion">
-            {items.map((item, index) => (
-              <div className="accordion-item border border-white mb-2" key={index}>
-                <h2 className="accordion-header" id={`heading${index}`}>
-                  <button
-                    className="accordion-button collapsed bg-dark text-white"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target={`#collapse${index}`}
-                    aria-expanded="false"
-                    aria-controls={`collapse${index}`}
-                    style={{ border: 'none' }}
-                  >
-                    {item.number}. {item.japanese}
-                  </button>
-                </h2>
-                <div
-                  id={`collapse${index}`}
-                  className="accordion-collapse collapse"
-                  aria-labelledby={`heading${index}`}
-                  data-bs-parent="#exerciseAccordion"
+      {restOfResponse !== '' && items.length > 0 && (
+        <div className="accordion mt-4" id="exerciseAccordion">
+          {items.map((item, index) => (
+            <div className="accordion-item border border-white mb-3" key={index}>
+              <h2 className="accordion-header" id={`heading${index}`}>
+                <button
+                  className="accordion-button collapsed bg-dark text-white"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target={`#collapse${index}`}
+                  aria-expanded="false"
+                  aria-controls={`collapse${index}`}
+                  style={{ border: 'none' }}
                 >
-                  <div className="accordion-body bg-dark text-white text-center">
-                    解答: <strong>{item.english}</strong>
-                    <br />
-                    <small className="text-white-50">({item.explanation})</small>
-                  </div>
+                  {item.number}. {item.japanese}
+                </button>
+              </h2>
+              <div
+                id={`collapse${index}`}
+                className="accordion-collapse collapse"
+                aria-labelledby={`heading${index}`}
+                data-bs-parent="#exerciseAccordion"
+              >
+                <div className="accordion-body bg-dark text-white text-center">
+                  解答: <strong>{item.english}</strong>
+                  <br />
+                  <small className="text-white-50">({item.explanation})</small>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
