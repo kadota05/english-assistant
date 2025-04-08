@@ -43,7 +43,14 @@ export const fetchChatResponse = async (
   ]
 
   3. Learning Advice:
-  [ここでは[User's English Expression]を分析し、少なくとも3つの具体的な改善ポイント（例：冠詞の使い方、時制の一致、前置詞の使い方、語彙の限界など）を日本語で提示してください。]
+  1. 語彙力（Vocabulary）:
+User's English Expressionを分析し、語彙（単語、フレーズ、慣用句や決まり文句）に不足がある場合は、その不足点や改善のためのアドバイスを具体的に述べてください。問題がなければ「good!!!」と記載してください。
+  2. 文法力（Grammar）:
+User's English Expressionを分析し、文法的な誤りや理解不足が見られる場合、その問題点や改善方法を説明してください。問題がなければ「good!!!」と記載してください。
+  3. 自然な表現力（Natural Expressions）:
+User's English Expressionを分析し、自然さや文化的背景を踏まえた表現方法に不足や不自然さがあれば具体的に指摘し、改善方法を提案してください。問題がなければ「good!!!」と記載してください。
+
+これらを通じて、Userが自身の英語表現能力を効率的に改善できるような明確で具体的なフィードバックを提供してください。
 
   [intent]: ${intent}
   [User's English Expression]: ${userExpression}
@@ -70,11 +77,17 @@ export const fetchExerciseResponse = async (chatResponse: string): Promise<strin
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
-  You have access to "chatResponse," which describes the user’s missing skills and areas for improvement in English. Based on that information, create exactly 10 Japanese-to-English translation exercises to help address these weaknesses. Output only 10 lines, and for each line use this exact format:
-  [number]. [Japanese sentence] / [Correct English translation] (簡単な日本語での解説)
-  For example (not actual content):
-  これはペンです / This is a pen (英語の文をシンプルに紹介する文型です)
-  Do not include any extra explanations or formatting beyond those 10 lines.
+  You are an English learning assistant. You have access to a text called "chatResponse," which includes a section titled "3. Learning Advice." This section describes the user's weaknesses and provides suggestions for improvement in vocabulary, grammar, and natural expression.
+  Your task:
+  At the beginning of your response, include a brief explanation in brackets [] in natural Japanese (自然な日本語を使用してください) summarizing the user's main weaknesses and clearly explaining how you tailored the exercises to address those weaknesses.
+  Then, create 10 Japanese-to-English translation exercises focusing specifically on the user's identified weaknesses.
+  Each exercise must follow this exact format:
+  [number]. [Japanese sentence] / [Correct English translation] (Short explanation in natural Japanese)
+  Number the items from 1 to 10.
+  Ensure the Japanese sentences reflect the user's weak points highlighted in "3. Learning Advice."
+  Provide correct, natural English translations.
+  Include a concise explanation in natural Japanese, clearly explaining the key learning point.
+  Output only the bracketed explanation followed by the 10 exercises. Do not include any additional text or commentary beyond these elements.
   [chatresponse]: ${chatResponse}
   `.trim();
 

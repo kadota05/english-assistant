@@ -10,7 +10,7 @@ import {
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
 import { useTypewriter } from '../hooks/useTypewriter';
-import { ChatLog, addChatLog } from '../store/chatLogService';
+import { ChatLog, addChatLog, getChatLog } from '../store/chatLogService';
 
 type SentenceEditorProps = {
     chatResponse: string;
@@ -38,6 +38,7 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     setUserExpressionError('');
     setChatResponse('');
     setSections(['', '', '']);
+    setIsReviewMode(false);
   }
 
   // 送信時
@@ -65,25 +66,22 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     try {
       const responseText = await fetchChatResponse(intent, userExpression);
       setChatResponse(responseText);
+
+      // indexedDBに追加
+      const newLog: ChatLog = {
+        UserIntent: intent,
+        UserExpression: userExpression,
+        chatResponse: responseText,
+        timestamp: Date.now(),
+      };
+      const key = await addChatLog(newLog);
+      console.log(`チャットログが追加されました（ID: ${key}）`)
+
     } catch (error) {
       setChatResponse('エラーが発生しました。もう一度お試しください。');
     } finally {
       setLoading(false);
     }
-    (async () => {
-      const newLog: ChatLog = {
-        UserIntent: intent,
-        UserExpression: userExpression,
-        chatResponse: chatResponse,
-        timestamp: Date.now(),
-      };
-      try{
-        const key = await addChatLog(newLog);
-        console.log(`チャットログが追加されました（ID: ${key}）`)
-      } catch(error){
-        console.error("チャットログを追加できませんでした:", error)
-      }
-    })();
   };
 
   const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect } = useTypewriter(20);
@@ -108,8 +106,11 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     setSections(secs);
     if (!isReviewMode) {
       startTypewriterEffect(secs);
+    } else {
+      finishTypewriterEffect(secs);
     }
-  }, [chatResponse]);
+  }, [chatResponse, isReviewMode]);
+  
 
   // Popover
   usePopover(descriptionRef, {

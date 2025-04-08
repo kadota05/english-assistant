@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes, Route } from 'react-router-dom';
@@ -21,7 +21,13 @@ const App: React.FC = () => {
       console.error('過去のチャットの取得に失敗しました:', error);
     }
   };
-
+  useEffect(() => {
+    if (selectedChat) {
+      console.log('chatResponse updated:', selectedChat.chatResponse);
+    }
+  }, [selectedChat]);
+  
+  
   return (
     <div className="App bg-dark text-white min-vh-100">
       {/* ヘッダー */}
