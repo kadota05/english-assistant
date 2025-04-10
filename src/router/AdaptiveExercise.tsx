@@ -1,20 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchExerciseResponse } from '../services/aiService';
 import { ChatLog } from '../store/chatLogService';
+import { exercise, addExercise, editExercise } from '../store/exerciseService'
 
 type AdaptiveExerciseProps = {
   selectedChat: ChatLog | null;
+  relatedExercise: exercise | null;
 };
 
-const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat }) => {
+type items = {
+  number: string;
+  japanese: string;
+  english: string;
+  explanation: string;
+}
+
+const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat, relatedExercise }) => {
   const [exerciseResponse, setExerciseResponse] = useState<string>('');
+  const [bracketedText, setBracketedText] = useState<string>('');
+  const [restOfResponse, setRestOfResponse] = useState<string>('');
+  const [items, setItems] = useState<items[]>([]);
+  
   const [loading, setLoading] = useState<boolean>(false);
+  const [existExercise, setExistExercise] = useState<boolean>(false);
+
+
+  // 過去のチャットが選ばれたときに値をセットする用のuseEffect
+  useEffect(()=>{
+    // console.log("relatedExercise が更新されました:", relatedExercise);
+    if(relatedExercise){
+      setExerciseResponse(relatedExercise.exerciseResponse);
+      setExistExercise(true);
+      // console.log("過去のチャットセット完了")
+    }
+  }, [relatedExercise]);
+
+  // 表示用のuseEffect
+  useEffect(()=>{
+    // まず冒頭の[ ]部分を抽出 → 残りの文字列をparse
+  const { bracketedText, restOfResponse } = extractBracketedText(exerciseResponse);
+  setBracketedText(bracketedText);
+  setRestOfResponse(restOfResponse);
+
+  const items = parseResponse(restOfResponse);
+  setItems(items);
+  }, [exerciseResponse])
+  
 
   const handleSend = async () => {
+    if (!selectedChat) {
+      setExistExercise(false);
+      console.error('chatResponseが取得できていません。');
+      return;
+    }
     setLoading(true);
+
     try {
       const exerciseText = await fetchExerciseResponse(selectedChat?.chatResponse || '');
       setExerciseResponse(exerciseText);
+
+      // indexedDBにaddする
+      const newExercise: exercise = {
+        chatResponse: selectedChat.chatResponse,
+        exerciseResponse: exerciseText,
+        isLike: false,
+        numReview: null
+      }
+      if (!existExercise){
+        const key = await addExercise(newExercise);
+        console.log(`エクササイズが追加されました (key:${key})`);
+      } else{
+        const key = await editExercise(newExercise);
+        console.log(`エクササイズを変更しました (key:${key})`);
+      }
+      
     } catch (error) {
       setExerciseResponse('エラーが発生しました。もう一度お試しください。');
     } finally {
@@ -53,10 +112,6 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat }) => 
     }
     return items;
   };
-
-  // まず冒頭の[ ]部分を抽出 → 残りの文字列をparse
-  const { bracketedText, restOfResponse } = extractBracketedText(exerciseResponse);
-  const items = parseResponse(restOfResponse);
 
   return (
     <>

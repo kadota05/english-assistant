@@ -7,15 +7,15 @@ type Props = {
     showSectionCards: boolean[];
     typedSections: string[];
     sections: string[];
-    isReviewMode: boolean; //いきなりカード表示かタイプライター表示か決める 
+    // isReviewMode: boolean; //いきなりカード表示かタイプライター表示か決める 
 }
 
-const AIAnswer: React.FC<Props> = ({ currentSectionIndex, showSectionCards, typedSections, sections, isReviewMode }) => {
+const AIAnswer: React.FC<Props> = ({ currentSectionIndex, showSectionCards, typedSections, sections }) => {
     return (
         <div className="mt-4">
             {currentSectionIndex >= 0 && (
                 <>
-                {isReviewMode || showSectionCards[0] ? (
+                {showSectionCards[0] ? (
                     sections[0] && (
                         <div className="card shadow-sm mb-3 bg-secondary border-2">
                             <div className="card-header fw-bold bg-primary text-white">1. 正しい表現</div>
@@ -34,7 +34,7 @@ const AIAnswer: React.FC<Props> = ({ currentSectionIndex, showSectionCards, type
 
             {currentSectionIndex >= 1 && (
                 <>
-                {isReviewMode || showSectionCards[1] ? (
+                {showSectionCards[1] ? (
                     sections[1] && (
                         <div className="card shadow-sm mb-3 bg-secondary border-2">
                             <div className="card-header fw-bold bg-primary text-white">2. 他の表現</div>
@@ -53,7 +53,7 @@ const AIAnswer: React.FC<Props> = ({ currentSectionIndex, showSectionCards, type
 
             {currentSectionIndex >= 2 && (
                 <>
-                {isReviewMode || showSectionCards[2] ? (
+                {showSectionCards[2] ? (
                     sections[2] && (
                         <div className="card shadow-sm mb-3 bg-secondary border-2">
                             <div className="card-header fw-bold bg-primary text-white">3. 今後のアドバイス</div>

@@ -9,16 +9,21 @@ import {
 } from '../compenents/index';
 import { fetchChatResponse } from '../services/aiService';
 import { usePopover } from '../hooks/usePopover';
-import { useTypewriter } from '../hooks/useTypewriter';
-import { ChatLog, addChatLog, getChatLog } from '../store/chatLogService';
+import { ChatLog, addChatLog } from '../store/chatLogService';
 
 type SentenceEditorProps = {
-    chatResponse: string;
-    setChatResponse: React.Dispatch<React.SetStateAction<string>>;
-    selectedChat: ChatLog | null;
-}
+  chatResponse: string;
+  setChatResponse: React.Dispatch<React.SetStateAction<string>>;
+  selectedChat: ChatLog | null;
+  setSelectedChat: React.Dispatch<React.SetStateAction<ChatLog | null>>;
+};
 
-const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatResponse, selectedChat } ) => {
+const SentenceEditor: React.FC<SentenceEditorProps> = ({
+  chatResponse,
+  setChatResponse,
+  selectedChat,
+  setSelectedChat
+}) => {
   const [intent, setIntent] = useState<string>('');
   const [userExpression, setUserExpression] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,10 +32,9 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
 
   const descriptionRef = useRef<HTMLSpanElement>(null);
 
-  // セクション情報
+  // セクション情報（各項目はすぐ完成状態で表示）
   const [sections, setSections] = useState<string[]>(['', '', '']);
-  const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
-  
+
   const handleReset = () => {
     setIntent('');
     setIntentError('');
@@ -38,12 +42,10 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     setUserExpressionError('');
     setChatResponse('');
     setSections(['', '', '']);
-    setIsReviewMode(false);
-  }
+  };
 
-  // 送信時
+  // 送信時（入力チェック後、AI の応答を取得し、チャットログを indexedDB および親状態へ更新）
   const handleSend = async () => {
-    setIsReviewMode(false);
     let valid = true;
     if (!intent.trim()) {
       setIntentError('必須項目です');
@@ -67,7 +69,7 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
       const responseText = await fetchChatResponse(intent, userExpression);
       setChatResponse(responseText);
 
-      // indexedDBに追加
+      // indexedDB に新規チャットログとして保存
       const newLog: ChatLog = {
         UserIntent: intent,
         UserExpression: userExpression,
@@ -75,8 +77,10 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
         timestamp: Date.now(),
       };
       const key = await addChatLog(newLog);
-      console.log(`チャットログが追加されました（ID: ${key}）`)
+      console.log(`チャットログが追加されました（ID: ${key}）`);
 
+      // 親状態へ反映
+      setSelectedChat(newLog);
     } catch (error) {
       setChatResponse('エラーが発生しました。もう一度お試しください。');
     } finally {
@@ -84,35 +88,25 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     }
   };
 
-  const { typedSections, showSectionCards, currentSectionIndex, startTypewriterEffect, finishTypewriterEffect } = useTypewriter(20);
-  // 過去ログ選択時
+  // 過去ログ選択時：親状態の selectedChat に保存された情報を反映し、即時全表示
   useEffect(() => {
     if (selectedChat) {
-        setIsReviewMode(true);
-        setIntent(selectedChat.UserIntent);
-        setUserExpression(selectedChat.UserExpression);
-        setChatResponse(selectedChat.chatResponse);
-        // chatResponse をパースして各セクションを取得
-        const secs = parseSections(selectedChat.chatResponse);
-        // レビュー用モードなので、finishTypewriterEffect を呼んで currentSectionIndex をセクション数分（たとえば 3 なら 3）に更新
-        finishTypewriterEffect(secs);
+      setIntent(selectedChat.UserIntent);
+      setUserExpression(selectedChat.UserExpression);
+      setChatResponse(selectedChat.chatResponse);
+      const secs = parseSections(selectedChat.chatResponse);
+      setSections(secs);
     }
-  }, [selectedChat])
+  }, [selectedChat]);
 
-  // chatResponse更新 → 3セクションに分割
+  // chatResponse 更新時：テキストを3セクションに分割して即時全表示
   useEffect(() => {
     if (!chatResponse) return;
     const secs = parseSections(chatResponse);
     setSections(secs);
-    if (!isReviewMode) {
-      startTypewriterEffect(secs);
-    } else {
-      finishTypewriterEffect(secs);
-    }
-  }, [chatResponse, isReviewMode]);
-  
+  }, [chatResponse]);
 
-  // Popover
+  // Popover 設定
   usePopover(descriptionRef, {
     container: 'body',
     placement: 'bottom',
@@ -130,12 +124,10 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
     `,
   });
 
-  // Enterキー
+  // Enterキーで送信
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (!isReviewMode) {
-        handleSend();
-      }
+      handleSend();
     }
   };
 
@@ -155,9 +147,9 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
 
   return (
     <>
-    <div className="row justify-content-center">
+      <div className="row justify-content-center">
         <div className="col-10 col-sm-8 col-md-6 col-lg-5">
-        <UserInputs
+          <UserInputs
             intent={intent}
             setIntent={setIntent}
             userExpression={userExpression}
@@ -165,32 +157,31 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ( { chatResponse, setChatR
             intentError={intentError}
             userExpressionError={userExpressionError}
             handleKeyDown={handleKeyDown}
-        />
-        <div className="text-center my-4">
+          />
+          <div className="text-center my-4">
             <div className="d-inline-flex align-items-center gap-2">
-            <DescriptionIcon descriptionRef={descriptionRef} />
-            <SendButton handleSend={handleSend} loading={loading} />
-            <ResetButton handleReset={handleReset} />
+              <DescriptionIcon descriptionRef={descriptionRef} />
+              <SendButton handleSend={handleSend} loading={loading} />
+              <ResetButton handleReset={handleReset} />
             </div>
-        </div>
-        <AIAnswer
-            currentSectionIndex={currentSectionIndex}
-            showSectionCards={showSectionCards}
-            typedSections={typedSections}
+          </div>
+          <AIAnswer
+            // すべてのセクションを完成状態として表示
+            typedSections={sections}
             sections={sections}
-            isReviewMode={isReviewMode}
-        />
+            currentSectionIndex={sections.length}
+            showSectionCards={[true, true, true]}
+          />
         </div>
-    </div>
+      </div>
 
-
-    {chatResponse && chatResponse.trim() && (
+      {chatResponse && chatResponse.trim() && (
         <div className="position-fixed start-50 translate-middle-x" style={{ bottom: '10px' }}>
-        <ScrollToBottom />
+          <ScrollToBottom />
         </div>
-    )}
+      )}
     </>
   );
-}
+};
 
 export default SentenceEditor;

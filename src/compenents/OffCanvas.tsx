@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ChatLog, getAllChatLogs, deleteChatLog } from '../store/chatLogService';
+import { ChatLog, getAllChatLogs, getChatLog, deleteChatLog } from '../store/chatLogService';
+import { deleteExercise } from '../store/exerciseService';
 
 type Props = {
   handlePastChat: (logID: number) => Promise<void>;
@@ -36,8 +37,17 @@ const OffCanvas: React.FC<Props> = ({ handlePastChat }) => {
   const handleDelete = async (id: number) => {
     if (window.confirm("このチャットログを削除しますか？")) {
       try{
+        const targetChatLog = await getChatLog(id);
+        console.log('targetChatLog取得に成功');
+        
         await deleteChatLog(id);
         setChatLogs(prev => prev.filter(log=>log.id !== id));
+        console.log('ChatLogsストアから削除することに成功');
+
+        await deleteExercise(targetChatLog.chatResponse);
+        console.log('Exercisesストアから削除することに成功');
+        
+        console.log('無事削除できましたとさ');
       } catch(error){
         console.error("削除エラー", error)
       }
