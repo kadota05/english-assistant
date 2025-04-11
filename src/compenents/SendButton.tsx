@@ -3,9 +3,10 @@ import React from 'react';
 type Props = {
     handleSend: () => void;
     loading: boolean;
+    buttonString: string;
 }
 
-const SendButton: React.FC<Props> = ( {handleSend, loading} ) => {
+const SendButton: React.FC<Props> = ( {handleSend, loading, buttonString } ) => {
     return (
         <button
             className="btn btn-outline-primary rounded-pill fw-semibold mx-1"
@@ -18,7 +19,7 @@ const SendButton: React.FC<Props> = ( {handleSend, loading} ) => {
                 考えています...
                 </>
             ) : (
-                '添削してもらう'
+                buttonString
             )}
             </button>
     )

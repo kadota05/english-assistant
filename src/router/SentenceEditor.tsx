@@ -36,12 +36,7 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ({
   const [sections, setSections] = useState<string[]>(['', '', '']);
 
   const handleReset = () => {
-    setIntent('');
-    setIntentError('');
-    setUserExpression('');
-    setUserExpressionError('');
-    setChatResponse('');
-    setSections(['', '', '']);
+    window.location.reload();
   };
 
   // 送信時（入力チェック後、AI の応答を取得し、チャットログを indexedDB および親状態へ更新）
@@ -161,7 +156,7 @@ const SentenceEditor: React.FC<SentenceEditorProps> = ({
           <div className="text-center my-4">
             <div className="d-inline-flex align-items-center gap-2">
               <DescriptionIcon descriptionRef={descriptionRef} />
-              <SendButton handleSend={handleSend} loading={loading} />
+              <SendButton handleSend={handleSend} loading={loading} buttonString={'添削してもらう'} />
               <ResetButton handleReset={handleReset} />
             </div>
           </div>

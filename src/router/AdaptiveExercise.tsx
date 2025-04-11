@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import {
+  SendButton
+} from '../compenents/index';
 import { fetchExerciseResponse } from '../services/aiService';
 import { ChatLog } from '../store/chatLogService';
 import { exercise, addExercise, editExercise } from '../store/exerciseService'
@@ -141,21 +144,14 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat, relat
           }
         `}
       </style>
-      <div className="text-danger text-center mb-3">まだ開発中だよ</div>
       {selectedChat ? (
-        <div className="text-center mb-3">作成できます！</div>
+        <div className="text-center">
+          <SendButton handleSend={handleSend} loading={loading} buttonString={'問題を作成する'} />
+        </div>
       ) : (
-        <div className="text-center mb-3">chatResponseを得て下さい!</div>
+        <div className="text-center mb-3">※先にEditページを済ませてください</div>
       )}
-
-      <div className="text-center">
-        <button className="btn btn-primary" onClick={handleSend}>
-          作成
-        </button>
-      </div>
-
-      {loading && <div className="text-center mt-2">作問しています</div>}
-
+      
       {/* 抽出した[ ]部分をアドバイス表示用にスタイル */}
       {bracketedText && (
         <div className="advice-box">
