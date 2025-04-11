@@ -79,7 +79,9 @@ export const fetchExerciseResponse = async (chatResponse: string): Promise<strin
   const prompt = `
   You are an English learning assistant. You have access to a text called "chatResponse," which includes a section titled "3. Learning Advice." This section describes the user's weaknesses and provides suggestions for improvement in vocabulary, grammar, and natural expression.
   Your task:
-  At the beginning of your response, include a brief explanation in brackets [] in natural Japanese (自然な日本語を使用してください) summarizing the user's main weaknesses and clearly explaining how you tailored the exercises to address those weaknesses.
+  At the beginning of your response, include a brief explanation in brackets [] in natural Japanese (自然な日本語を使用してください) summarizing the user’s main weaknesses and clearly explaining how you tailored the exercises to address those weaknesses. Please use a tone and style similar to these examples:
+   - 「語彙力、とくに「あ」みたいにいろんな意味があって混乱しやすい単語を使うのが少し苦手みたいですね。なので、ピッタリの英語を選べるような問題を作りましたよ！」
+   - 「日本語を自然な英語にパッと変えるのがちょっと難しいみたいですね。そこで、英語らしく考えるコツを身につけるための問題を用意しました！」
   Then, create 10 Japanese-to-English translation exercises focusing specifically on the user's identified weaknesses.
   Each exercise must follow this exact format:
   [number]. [Japanese sentence] / [Correct English translation] (Short explanation in natural Japanese)
