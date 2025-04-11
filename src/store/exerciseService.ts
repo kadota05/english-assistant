@@ -1,6 +1,7 @@
 import { openDB } from './db'
 
 export type exercise = {
+    id?: number;
     chatResponse: string,
     exerciseResponse: string,
     isLike: boolean,

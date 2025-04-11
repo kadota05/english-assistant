@@ -72,7 +72,9 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat, relat
       if (!existExercise){
         const key = await addExercise(newExercise);
         console.log(`エクササイズが追加されました (key:${key})`);
+        setExistExercise(true);
       } else{
+        newExercise.id = relatedExercise?.id
         const key = await editExercise(newExercise);
         console.log(`エクササイズを変更しました (key:${key})`);
       }
@@ -145,9 +147,15 @@ const AdaptiveExercise: React.FC<AdaptiveExerciseProps> = ({ selectedChat, relat
         `}
       </style>
       {selectedChat ? (
-        <div className="text-center">
-          <SendButton handleSend={handleSend} loading={loading} buttonString={'問題を作成する'} />
-        </div>
+        existExercise ? (
+          <div className="text-center">
+            <SendButton handleSend={handleSend} loading={loading} buttonString={'再生成'} />
+          </div>
+        ) : (
+          <div className="text-center">
+            <SendButton handleSend={handleSend} loading={loading} buttonString={'問題を作成する'} />
+          </div>
+        )
       ) : (
         <div className="text-center mb-3">※先にEditページを済ませてください</div>
       )}
